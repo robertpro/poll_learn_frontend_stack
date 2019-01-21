@@ -1,0 +1,6 @@
+[submodule "poll_learn_frontend_frontend"]
+	path = poll_learn_frontend_frontend
+	url = git@github.com:robertpro/poll_learn_frontend_frontend.git
+[submodule "poll_learn_frontend_backend"]
+	path = poll_learn_frontend_backend
+	url = git@github.com:robertpro/poll_learn_frontend_backend.git

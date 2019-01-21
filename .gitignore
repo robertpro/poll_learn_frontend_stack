@@ -1,0 +1,9 @@
+# Non python source code files
+*py[cod]
+
+# PyCharm files
+.idea
+
+# direnv diles
+.env
+.envrc

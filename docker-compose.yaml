@@ -1,0 +1,63 @@
+version: '3'
+
+networks:
+  poll_network:
+    external:
+      name: poll_network
+
+services:
+  db:
+    image: postgres
+    container_name: poll_db
+    restart: always
+    networks:
+      poll_network:
+        aliases:
+          - poll_postgres_network
+    environment:
+      POSTGRES_DB: $DB_NAME
+      POSTGRES_PASSWORD: $DB_PASS
+      POSTGRES_USER: $DB_USER
+    volumes:
+      - $DB_DATA_PATH:/var/lib/postgresql/data/
+
+  api:
+    build:
+      context: poll_learn_frontend_backend
+      dockerfile: Dockerfile
+    image: poll_api:latest
+    container_name: poll_api
+    env_file: .env
+    networks:
+      poll_network:
+        aliases:
+          - poll_api_network
+    command: python manage.py runserver 0.0.0.0:$API_PORT
+    volumes:
+      - ./poll_learn_frontend_backend/:/app
+    ports:
+      - "$API_PORT:$API_PORT"
+    depends_on:
+      - db
+
+  web:
+    build:
+      context: poll_learn_frontend_frontend
+      dockerfile: Dockerfile
+    image: poll_web:latest
+    container_name: poll_web
+    env_file: .env
+    environment:
+      HOST: 0.0.0.0
+      PORT: $WEB_PORT
+    networks:
+      poll_network:
+        aliases:
+          - poll_web_network
+    command: npm run dev
+    volumes:
+      - ./poll_learn_frontend_frontend/:/app
+    ports:
+      - $WEB_PORT:$WEB_PORT
+    depends_on:
+      - api
